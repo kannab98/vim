@@ -42,27 +42,16 @@ def add_row(snip):
 
 	snip.expand_anon(final_str)
 
-
-texMathZones = ['texMathZone'+x for x in ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
-
-texIgnoreMathZones = ['texMathText']
-
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-ignore = texIgnoreMathZoneIds[0]
-
-def math():
-	synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-	try:
-		first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-		return first != ignore
-	except StopIteration:
-		return False
-
-		
 endglobal
 
+
+global !p
+def math():
+    return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+
+def comment(): 
+    return vim.eval('vimtex#syntax#in_comment()') == '1'
+endglobal
 
 
 #------------------------------------------------------------
@@ -70,11 +59,11 @@ endglobal
 
 
 
-snippet уйк "Math" wA
+snippet "(eqr(ef)?)|(уйк)" "Math" rwA
 \eqref{eq:${1}} ${0}
 endsnippet
 
-snippet ьь "Math" wA
+snippet "(ьь)|(mm)" "Math" rwA
 $${1}$`!p
 if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
     snip.rv = ' '
@@ -87,7 +76,7 @@ snippet root "Root directory"
 %!TEX root = ${1:./}
 endsnippet
 
-snippet уй "Equation" b 
+snippet "(eq(ation)?)|(уй)" "Equation" br
 \begin{equation}
 	\label{eq:${2}}
 	${0:${VISUAL}}
@@ -95,17 +84,13 @@ snippet уй "Equation" b
 endsnippet
 
 
-context "math()"
-snippet e "epsilon" iw
-\epsilon
-endsnippet
 
 context "math()"
 snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "symbol frac" wrA
 \\frac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
-priority 1000
+#priority 1000
 context "math()"
 snippet '^.*\)/' "() frac" wrA
 `!p
@@ -152,6 +137,9 @@ snippet ooo "\infty" iA
 \infty
 endsnippet
 
+snippet math "check math mode" w
+`!p snip.rv = math()`
+endsnippet
 
 context "math()"
 snippet td "to the ... power" iA
@@ -332,8 +320,6 @@ snippet acl "Acroynm expanded" b
 \acl{${1:acronym}}
 $0
 endsnippet
-
-
 
 snippet ni "Non-indented paragraph" b
 \noindent

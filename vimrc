@@ -76,7 +76,8 @@ call plug#begin('~/.vim/plugged')
         let g:UltiSnipsExpandTrigger       = "<tab>"
         let g:UltiSnipsJumpForwardTrigger  = "<tab>"
         let g:UltiSnipsJumpBackwardTrigger = "<S-tab>"
-        let g:UltiSnipsSnippetDirectories  = ["UltiSnips", $HOME . "/.vim/"]
+        let g:UltiSnipsSnippetsDir="~/.vim/"
+        let g:UltiSnipsSnippetDirectories  = [$HOME . "/.vim/", "UltiSnips"]
     endif
 
 
